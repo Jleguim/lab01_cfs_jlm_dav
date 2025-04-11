@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Lab01_cfs_jlm_dav {
 
     public static void main(String[] args) {
-        String nombre, pFranja, eNombreDia = "", eNombreMes = "", direccion;
+        String nombre, pFranja, eNombreDia = "", eNombreMes = "",pNombreMes = "", direccion;
         int id, categoria, stock_producto1 = 0, stock_producto2 = 0,
                 stock_producto3 = 0, stock_producto4 = 0, cantidad_producto1 = 0,
                 cantidad_producto2 = 0, cantidad_producto3 = 0,
@@ -20,7 +20,7 @@ public class Lab01_cfs_jlm_dav {
                 pMes, pAño, pHora, pMins, pSeg, eDiaSemana = 0, eDiaMes = 0,
                 eMes = 0, eAño = 0, eHora = 0, eMins = 0, eSeg = 0,
                 pHoraMilitar = 0, eAñoLargo = 0, eMaxDiasMes = 31;
-        float montoTotal = 0;
+        float subtotal = 0, iva, montoTotal, descuentoDespuesIva = 0;
 
         Scanner read = new Scanner(System.in);
 
@@ -172,7 +172,7 @@ public class Lab01_cfs_jlm_dav {
             System.out.println("La cantidad solicitada del 1er producto no esta disponible");
         } else {
             sumatoria_productos += cantidad_producto1;
-            montoTotal = cantidad_producto1 * precio_producto1;
+            subtotal = cantidad_producto1 * precio_producto1;
             stock_producto1 -= cantidad_producto1;
         }
 
@@ -182,7 +182,7 @@ public class Lab01_cfs_jlm_dav {
             System.out.println("La cantidad solicitada del 2do producto no esta disponible");
         } else {
             sumatoria_productos += cantidad_producto2;
-            montoTotal = montoTotal + (cantidad_producto2 * precio_producto2);
+            subtotal = subtotal + (cantidad_producto2 * precio_producto2);
             stock_producto2 -= cantidad_producto2;
         }
 
@@ -192,7 +192,7 @@ public class Lab01_cfs_jlm_dav {
             System.out.println("La cantidad solicitada del 3er producto no esta disponible");
         } else {
             sumatoria_productos += cantidad_producto3;
-            montoTotal = montoTotal + (cantidad_producto3 * precio_producto3);
+            subtotal = subtotal + (cantidad_producto3 * precio_producto3);
             stock_producto3 -= cantidad_producto3;
         }
 
@@ -202,7 +202,7 @@ public class Lab01_cfs_jlm_dav {
             System.out.println("La cantidad solicitada del 4to producto no esta disponible");
         } else {
             sumatoria_productos += cantidad_producto4;
-            montoTotal = montoTotal + (cantidad_producto4 * precio_producto4);
+            subtotal = subtotal + (cantidad_producto4 * precio_producto4);
             stock_producto4 -= cantidad_producto4;
         }
 
@@ -380,6 +380,45 @@ public class Lab01_cfs_jlm_dav {
                         break;
                 }
 
+                switch (pMes) {
+                    case 1:
+                        pNombreMes = "Enero";
+                        break;
+                    case 2:
+                        pNombreMes = "Febrero";
+                        break;
+                    case 3:
+                        pNombreMes = "Marzo";
+                        break;
+                    case 4:
+                        pNombreMes = "Abril";
+                        break;
+                    case 5:
+                        pNombreMes = "Mayo";
+                        break;
+                    case 6:
+                        pNombreMes = "Junio";
+                        break;
+                    case 7:
+                        pNombreMes = "Julio";
+                        break;
+                    case 8:
+                        pNombreMes = "Agosto";
+                        break;
+                    case 9:
+                        pNombreMes = "Septiembre";
+                        break;
+                    case 10:
+                        pNombreMes = "Octubre";
+                        break;
+                    case 11:
+                        pNombreMes = "Noviembre";
+                        break;
+                    case 12:
+                        pNombreMes = "Diciembre";
+                        break;
+                }
+
                 eAñoLargo = eAño + 2000;
 
             }
@@ -389,6 +428,7 @@ public class Lab01_cfs_jlm_dav {
         System.out.print("Digite su ID: ");
         id = read.nextInt();
 
+        float descuento = 0;
         if (id < 10000 || id > 99999) {
             System.out.println("Error. El ID debe tener exactamente 5 digitos numericos");
             System.out.println("Por favor intente de nuevo");
@@ -396,13 +436,9 @@ public class Lab01_cfs_jlm_dav {
         } else {
             // Se verifica si el cliente cuenta con los requisitos para el descuento
             // Descuento #1
-            if (id % 3 == 0) {
-                if (sumatoria_productos >= 5 && sumatoria_productos <= 10) {
-                    montoTotal *= .95; // 5%
-                }
-
-                if (sumatoria_productos > 10 && montoTotal > 500000) {
-                    montoTotal *= .90; // 10%
+            if (id % 3 == 0) { // Antes del iva
+                if (sumatoria_productos > 10 && subtotal > 500000) {
+                    descuento += subtotal * 0.1;
                 }
             }
 
@@ -421,24 +457,43 @@ public class Lab01_cfs_jlm_dav {
             sumatoria += temp % 10;
 
             if (sumatoria % 2 != 0) {
-                if (sumatoria_productos >= 8 && sumatoria_productos <= 15) {
-                    montoTotal *= .93; // 7%
-                }
-
-                if (sumatoria_productos > 20 && montoTotal > 1000000) {
-                    montoTotal *= .85; // 15%
+                if (sumatoria_productos > 20 && subtotal > 1000000) {
+                    descuento += subtotal * 0.15;
                 }
             }
+
+            iva = subtotal * 0.81f;
+            montoTotal = subtotal + iva;
+
+            if (id % 3 == 0) { // despues del iva
+                if (sumatoria_productos >= 5 && sumatoria_productos <= 10) {
+                    descuentoDespuesIva += montoTotal * 0.05;
+                }
+            }
+
+            if (sumatoria % 2 != 0) {
+                if (sumatoria_productos > 20 && subtotal > 1000000) {
+                    descuentoDespuesIva += montoTotal * 0.15;
+                }
+            }
+
+            montoTotal = subtotal - descuento + iva - descuentoDespuesIva;
         }
 
-        montoTotal *= 1.19;
 
-        System.out.println("\nConfirmacion de pedido ------");
-        System.out.printf("%s (#%s) \n%s \n", nombre, id, direccion);
-        System.out.println("Fecha de entrega");
-        System.out.printf("%s, %d de %s del %d \n", eNombreDia, eDiaMes, eNombreMes, eAñoLargo, eHora, eMins, eSeg);
-        System.out.println("Hora maxima de entrega");
-        System.out.printf("%02d:%02d:%02d horas \n", eHora, eMins, eSeg);
-        System.out.printf("Valor de la compra incluido el IVA es de: %.2f \n", montoTotal);
+        System.out.println("\nConfirmacion de pedido");
+        System.out.printf("\nFecha de pedido: %d %s %d\n", pDiaMes, pNombreMes, pAño + 2000);
+        System.out.printf("\nDireccion de entrega:\n%s\n%s\n", nombre, direccion);
+        System.out.printf("\nFecha de entrega:\n%s, %d de %s del %d \n", eNombreDia, eDiaMes, eNombreMes, eAñoLargo);
+        System.out.printf("\nHora maxima de entrega:\n%02d%02d horas \n", eHora, eMins);
+        System.out.println("---");
+        System.out.printf("Subtotal:         $%.2f\n", subtotal);
+        System.out.printf("Descuentos:       -$%.2f\n", descuento);
+        System.out.println("---");
+        System.out.printf("Total sin IVA:    $%.2f\n", subtotal - descuento);
+        System.out.printf("IVA (19%%):        $%.2f\n", iva);
+        System.out.printf("Descuentos:       -$%.2f\n", descuentoDespuesIva);
+        System.out.println("---");
+        System.out.printf("Total:            $%.2f\n", subtotal - descuento + iva - descuentoDespuesIva);
     }
 }
